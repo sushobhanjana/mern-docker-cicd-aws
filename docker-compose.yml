@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mern_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build: ./server
+    container_name: mern_server
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mern_db
+      - NODE_ENV=development
+    depends_on:
+      - mongo
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules     # prevent overwriting node_modules
+    command: npm run dev              # use nodemon instead of npm start
+
+  client:
+    build: ./client
+    container_name: mern_client
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true    # 👈 enables polling so changes are detected
+      - WATCHPACK_POLLING=true      # 👈 helps CRA’s Webpack watcher inside Docker
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start                # CRA/Vite already hot reloads
+
+volumes:
+  mongo_data:
