@@ -71,7 +71,7 @@ app.post('/api/login', async (req, res) => {
 
 // Simple API route
 app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from the backend!' });
+  res.json({ message: 'Hello from the backend! this is updated to see in the frontend' });
 });
 
 const PORT = process.env.PORT || 5000;
