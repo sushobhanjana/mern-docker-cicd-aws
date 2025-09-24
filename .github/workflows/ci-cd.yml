@@ -86,7 +86,7 @@ jobs:
         with:
           task-definition: .github/workflows/ecs-client-task-def.json
           cluster: mern-cluster
-          service: mern-client-service
+          service: mern-client-task-service-36aflrao
           force-new-deployment: true
 
       - name: Update ECS service (server)
@@ -94,7 +94,7 @@ jobs:
         with:
           task-definition: .github/workflows/ecs-server-task-def.json
           cluster: mern-cluster
-          service: mern-server-service
+          service: mern-server-task-service-kc0cat1e
           force-new-deployment: true
 
   deploy:
