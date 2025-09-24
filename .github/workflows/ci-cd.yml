@@ -84,6 +84,7 @@ jobs:
       - name: Update ECS service (client)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
+          task-definition: .github/workflows/ecs-client-task-def.json
           cluster: mern-cluster
           service: mern-client-service
           force-new-deployment: true
@@ -91,6 +92,7 @@ jobs:
       - name: Update ECS service (server)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
+          task-definition: .github/workflows/ecs-server-task-def.json
           cluster: mern-cluster
           service: mern-server-service
           force-new-deployment: true

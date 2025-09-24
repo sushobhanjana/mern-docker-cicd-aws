@@ -1,0 +1,27 @@
+{
+  "family": "mern-server-task",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "mern-server",
+      "image": "909187290508.dkr.ecr.eu-north-1.amazonaws.com/mern/server:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 5000,
+          "hostPort": 5000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "MONGO_URI",
+          "value": "mongodb+srv://sushobhan_jana:HR76up6rxg8aExN@cluster0.axgpcvh.mongodb.net/sample_mflix?retryWrites=true&w=majority"
+        }
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
+}
