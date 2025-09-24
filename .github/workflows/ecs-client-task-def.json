@@ -1,5 +1,6 @@
 {
   "family": "mern-client-task",
+  "executionRoleArn": "arn:aws:iam::909187290508:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
