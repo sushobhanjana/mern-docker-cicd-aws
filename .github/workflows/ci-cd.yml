@@ -61,11 +61,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+
+      - name: Set image tag
+        id: vars
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
       - name: Build, tag, and push client image
         env:
           ECR_REGISTRY: 909187290508.dkr.ecr.eu-north-1.amazonaws.com
           ECR_REPOSITORY: mern/client
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           cd client
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -75,16 +80,24 @@ jobs:
         env:
           ECR_REGISTRY: 909187290508.dkr.ecr.eu-north-1.amazonaws.com
           ECR_REPOSITORY: mern/server
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           cd server
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Update client task definition image
+        run: |
+          jq '.containerDefinitions[0].image = "909187290508.dkr.ecr.eu-north-1.amazonaws.com/mern/client:'${{ env.IMAGE_TAG }}'"' .github/workflows/ecs-client-task-def.json > .github/workflows/ecs-client-task-def-patched.json
+
+      - name: Update server task definition image
+        run: |
+          jq '.containerDefinitions[0].image = "909187290508.dkr.ecr.eu-north-1.amazonaws.com/mern/server:'${{ env.IMAGE_TAG }}'"' .github/workflows/ecs-server-task-def.json > .github/workflows/ecs-server-task-def-patched.json
+
       - name: Update ECS service (client)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: .github/workflows/ecs-client-task-def.json
+          task-definition: .github/workflows/ecs-client-task-def-patched.json
           cluster: mern-cluster
           service: mern-client-task-service-36aflrao
           force-new-deployment: true
@@ -92,7 +105,7 @@ jobs:
       - name: Update ECS service (server)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: .github/workflows/ecs-server-task-def.json
+          task-definition: .github/workflows/ecs-server-task-def-patched.json
           cluster: mern-cluster
           service: mern-server-task-service-kc0cat1e
           force-new-deployment: true
